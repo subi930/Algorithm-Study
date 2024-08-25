@@ -1,46 +1,31 @@
 /*
-[ArrayList 활용 풀이 ]
-1. 리스트 원소 중 최댓값 원소를 max, max의 location 즉 인덱스 값을 maxLoctation이라 한다.
-2. 입력한 location 값과 maxLocation 값이 같을 시, 반복을 중단하고 실행순서인 order를 반환한다.
-3. location값과 maxLocation 값이 다를 시, max 값의 프로세스는 처리되었다 가정하고 0으로 원소 값을 수정한다.
-4. 다음 max값을 찾기 위해 리스트 원소들의 max를 다시 구한다.
-5. maxLocation 다음 인덱스부터 max값과 동일한 값을 구하기 위해 currentLocation 변수를 이용해 비교한다.
-6. max값과 동일한 원소를 찾을 시, 해당 원소를 max, max의 인덱스를 maxLocation 으로 재선언한다.
-7. 2번부터의 과정을 반복하며 답을 구한다. 
+[ PriorityQueue 활용 풀이 ]
+1. 우선순위 큐 선언 ( reverse 높은 숫자의 데이터가 먼저 나가는 구조 )
+2. 우선순위 큐에 priorities 원소들 삽입
+3. 우선순위 큐가 공백 큐가 될때까지 의 while 문 실행 검사
+4. while문 안에 priorites 길이만큼 for문 실행
+5. for문 안 조건, priorites[idx] == q.peek() 일 시, poll 및 order ++, idx == locaton 일 시, order 반환
  */
 import java.util.*;
 
 class Solution {
     public int solution(int[] priorities, int location) {
-        List<Integer> numbers = new ArrayList<>();
-        for(int x : priorities) {
-            numbers.add(x);
+        PriorityQueue<Integer> q = new PriorityQueue<>(Collections.reverseOrder());
+
+        for(int x: priorities){
+            q.add(x);
         }
         
-        int max = Collections.max(numbers);
-        int maxLocation = numbers.indexOf(max);
-
-        int order = 1;
-
-        while(true){
-            if(maxLocation == location) {
-                return order;
-              
-            }
-            else {
-                numbers.set(maxLocation,0);
-
-                max = Collections.max(numbers);
-                int currentLocation = maxLocation;
-
-                while(max!=numbers.get(currentLocation)){
-                    if(currentLocation == numbers.size() - 1) currentLocation = 0;
-                    else currentLocation++;
+        int order = 0;
+        while(!q.isEmpty()){
+            for(int i=0;i<priorities.length;i++){
+                if(priorities[i] == q.peek()) {
+                    q.poll();
+                    order++;
+                    if(i == location) return order;
                 }
-                maxLocation = currentLocation;
-                order++;
             }
         }
-    
+        return order;
     }
 }
