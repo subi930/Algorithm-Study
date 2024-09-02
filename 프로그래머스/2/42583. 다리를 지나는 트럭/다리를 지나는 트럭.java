@@ -2,46 +2,60 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 class Solution {
+    class Truck {
+        int weight;
+        int move;
+
+        public Truck(int weight) {
+            this.weight = weight;
+            this.move = 1;
+        }
+        public void moving() {
+            move++;
+        }
+    }
+    
     public int solution(int bridge_length, int weight, int[] truck_weights) {
+
         int time = 0;
-        int[] bridge = new int[bridge_length];
-        Queue<Integer> trucks = new LinkedList<>();
-        for(int x : truck_weights){
-            trucks.add(x);
+        int bridge_weight = 0;
+
+        Queue<Truck> waitingQueue = new LinkedList<>();
+        Queue<Truck> movingQueue = new LinkedList<>();
+
+        for(int t : truck_weights) {
+            waitingQueue.add(new Truck(t));
         }
 
-        while(!trucks.isEmpty()){
-            move(bridge);
-            if(trucks.peek()+ sum(bridge) <= weight) {
-                bridge[0] = trucks.poll();
+        while(!(waitingQueue.isEmpty() && movingQueue.isEmpty())) {
+            time++;
+
+            if(movingQueue.isEmpty()){
+                Truck t = waitingQueue.poll();
+                bridge_weight+=t.weight;
+                movingQueue.add(t);
+                continue;
             }
-            time++;
-        }
 
-        while(sum(bridge)>0){
-            move(bridge);
-            time++;
+            for(Truck t : movingQueue){
+                t.moving();
+            }
+
+            if(movingQueue.peek().move > bridge_length) {
+                Truck t =  movingQueue.poll();
+                bridge_weight -= t.weight;
+            }
+
+            if(!waitingQueue.isEmpty() && bridge_weight + waitingQueue.peek().weight <= weight){
+                Truck t = waitingQueue.poll();
+                bridge_weight += t.weight;
+                movingQueue.add(t);
+
+            }
+
+            
         }
-        
         return time;
-    }
 
-    static Integer sum(int[] arr){
-        Integer sum = 0;
-        for(int x : arr) {
-            sum += x;
-        }
-        return sum;
-    }
-
-    static void move(int[] arr){
-        for(int i = arr.length - 1 ; i >= 0; i --) {
-            if (arr[i]==0) continue;
-            if(i == arr.length - 1) arr[i] = 0;
-            else {
-                arr[i + 1] = arr[i];
-                arr[i] = 0;
-            }
-        }
     }
 }
