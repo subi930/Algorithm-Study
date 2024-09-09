@@ -1,1 +1,1 @@
-# JavaStudy
+# Algorithm-Study
